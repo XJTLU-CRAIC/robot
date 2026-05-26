@@ -122,7 +122,7 @@ private:
      */
     float getClawPosition(string part)
     {
-        return 4.8;
+        return 3.5;
     }
 
     /**
@@ -607,7 +607,7 @@ public:
                     robotCtrl(0, 0, 0);
                     talon.setActions(talon.ACTION_EXT);             // 机械臂动作：伸展
                     usleep(30 * 1000);                              // 等待：us
-                    talon.setJointPosition(talon.ARM_JOINT_6, 9.0); // 机械爪张开：9cm
+                    talon.setJointPosition(talon.ARM_JOINT_6, 7.0); // 机械爪张开：7cm
                 }
                 if (abs(pidLocal.feedBack - pidLocal.ref) <= pidLocal.deadline && findPart) // 面对目标零件姿态已校正Ok
                 {
@@ -960,7 +960,7 @@ public:
                 }
                 talon.setClawMotion(offsetX, offsetY); // 机械爪运动控制
                 sleep(2);
-                talon.setJointPosition(talon.ARM_JOINT_6, 9); // 机械爪放置零件
+                talon.setJointPosition(talon.ARM_JOINT_6, 7.0); // 机械爪放置零件：张开7cm
                 sleep(6);                   // 等待零件放置完成
                 // if (part != LABEL_AI_SCREW)
                 talon.setClawMotion(offsetX, 0.2); // 机械爪运动控制
