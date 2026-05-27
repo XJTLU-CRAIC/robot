@@ -48,7 +48,7 @@
         "num_inputs": "1", 
         "flatten_data": "0", 
         "func_name": "tvmgen_default_fused__copy_1", 
-        "hash": "d5ca90a9029e06d9"
+        "hash": "dae856a2bc862c74"
       }, 
       "inputs": [
         [
@@ -66,7 +66,7 @@
         "num_inputs": "1", 
         "flatten_data": "0", 
         "func_name": "tvmgen_default_fused__copy_2", 
-        "hash": "40ac943f37d76a6e"
+        "hash": "8f15b5d6d8172e6a"
       }, 
       "inputs": [
         [
@@ -84,7 +84,7 @@
         "num_inputs": "1", 
         "flatten_data": "0", 
         "func_name": "tvmgen_default_fused__copy_3", 
-        "hash": "71a6f7a80b369143"
+        "hash": "8c7edcd116d39791"
       }, 
       "inputs": [
         [
@@ -140,12 +140,12 @@
       [
         [1, 3, 320, 320], 
         [1, 3, 320, 320], 
-        [1, 27, 10, 10], 
-        [1, 27, 20, 20], 
-        [1, 27, 40, 40], 
-        [1, 27, 10, 10], 
-        [1, 27, 20, 20], 
-        [1, 27, 40, 40]
+        [1, 33, 10, 10], 
+        [1, 33, 20, 20], 
+        [1, 33, 40, 40], 
+        [1, 33, 10, 10], 
+        [1, 33, 20, 20], 
+        [1, 33, 40, 40]
       ]
     ]
   }, 

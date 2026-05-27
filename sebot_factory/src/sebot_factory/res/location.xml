@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <location>
     <table name="工作台-1">
-        <local position="-1.48579 1.10874 0" orientation="0 0 0.999973 0.00731517" />
+        <local position="-0.973983 0.82975 0" orientation="0 0 0.993878 -0.110487" />
     </table>
     <table name="工作台-2">
-        <local position="-3.05862 1.14835 0" orientation="0 0 0.999868 0.0162187" />
-    </table>
-    <table name="工作台-3">
-        <local position="-3.54345 3.09781 0" orientation="0 0 0.711482 0.702704" />
-    </table>
-    <table name="工作台-4">
-        <local position="-1.6495 3.15415 0" orientation="0 0 0.704745 0.70946" />
+        <local position="-3.00611 0.255993 0" orientation="0 0 0.988873 -0.148761" />
     </table>
     <serving name="取件台">
-        <local position="-0.343954 2.10964 0" orientation="0 0 -0.014474 0.999895" />
+        <local position="-0.953984 1.99253 0" orientation="0 0 0.134365 0.990932" />
     </serving>
     <origin name="起始点">
-        <local position="-0.00515435 -0.0391406 0" orientation="0 0 -0.0186041 0.999827" />
+        <local position="-0.165482 0.110228 0" orientation="0 0 0.142823 0.989748" />
     </origin>
     <counter name="结算区">
-        <local position="-0.0220104 -0.0387849 0" orientation="0 0 -0.0206944 0.999786" />
+        <local position="-0.216875 0.0785547 0" orientation="0 0 0.164928 0.986306" />
     </counter>
 </location>
