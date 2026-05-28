@@ -436,8 +436,8 @@ public:
 
         if (position < 0)
             position = 0;
-        else if (position > 10)
-            position = 10;
+        else if (position > 7)
+            position = 7;
 
         uint8_t buff[10];              // 多发送一个字节
         uint8_t check = 0;             // 校验位

@@ -7,6 +7,9 @@
 # new environment variables
 
 # modified environment variables
-export LD_LIBRARY_PATH='/root/workspace/sebot-t710-competition/sebot_ros_kits/devel/lib:/root/workspace/sebot-t710-competition/sebot_ros_stdr/devel/lib:/opt/ros/melodic/lib:/opt/ros/melodic/lib/aarch64-linux-gnu:/usr/lib:/usr/lib:/usr/lib'
-export PKG_CONFIG_PATH='/root/workspace/sebot-t710-competition/sebot_ros_kits/devel/lib/pkgconfig:/root/workspace/sebot-t710-competition/sebot_ros_stdr/devel/lib/pkgconfig:/opt/ros/melodic/lib/pkgconfig'
+export CMAKE_PREFIX_PATH="/root/workspace/sebot-t710-competition/sebot_factory/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH='/root/workspace/sebot-t710-competition/sebot_factory/devel/lib:/opt/ros/melodic/lib:/opt/ros/melodic/lib/aarch64-linux-gnu:/usr/lib:/usr/lib:/usr/lib'
+export PKG_CONFIG_PATH="/root/workspace/sebot-t710-competition/sebot_factory/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/root/workspace/sebot-t710-competition/sebot_factory/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/root/workspace/sebot-t710-competition/sebot_factory/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/root/workspace/sebot-t710-competition/sebot_factory/src:$ROS_PACKAGE_PATH"

@@ -38,7 +38,6 @@ private:
     long counter = 0;                // 计数器
     float orienOffset = 0.0;         // 姿态方向校正误差
     Talon talon;                     // 机械臂控制类
-    
 
     /**
      * @brief 激光雷达类
@@ -107,11 +106,11 @@ private:
     float getMedian(vector<float> stream)
     {
         sort(stream.begin(), stream.end()); // 排序
-        int size = stream.size()/3;
-        if (size & 1)                 // 位运算判断是否是奇数
-            return stream[size]*1.414; // 奇数
+        int size = stream.size() / 3;
+        if (size & 1)                    // 位运算判断是否是奇数
+            return stream[size] * 1.414; // 奇数
         else
-            return (stream[size] + stream[size + 1]) *1.414/ 2; // 偶数个
+            return (stream[size] + stream[size + 1]) * 1.414 / 2; // 偶数个
     }
 
     /**
@@ -180,7 +179,7 @@ public:
 
     Picking()
     {
-        string pathPkg = ros::package::getPath("sebot_factory");   // 功能包文件根路径
+        string pathPkg = ros::package::getPath("sebot_factory");    // 功能包文件根路径
         detection = make_shared<Detection>(pathPkg + "/res/model"); // 初始化NPU及AI模型
         detection->score = 0.4;                                     // AI检测置信度
 
@@ -234,7 +233,7 @@ public:
             std::string device;
             if (!getVideoDevice(VideoIndex::ASTRA_RGB, device))
                 device = "/dev/deepCamera";
-            captureDeep = VideoCapture(device,CAP_V4L2); // 打开摄像头
+            captureDeep = VideoCapture(device, CAP_V4L2); // 打开摄像头
             if (!captureDeep.isOpened())
                 ROS_ERROR_STREAM("can not open deepCamera !!!!");
             captureDeep.set(CAP_PROP_FRAME_WIDTH, COLSIMAGE);  // 设置图像的列
@@ -247,12 +246,12 @@ public:
             std::string device;
             if (!getVideoDevice(VideoIndex::ARM_RGB, device))
                 device = "/dev/rgbCamera";
-            captureRgb = VideoCapture(device,CAP_V4L2); // RGB摄像头初始化
+            captureRgb = VideoCapture(device, CAP_V4L2); // RGB摄像头初始化
             if (!captureRgb.isOpened())
                 ROS_ERROR_STREAM("can not open rgbCamera !!!!");
             captureRgb.set(CAP_PROP_FRAME_WIDTH, COLSIMAGE);  // 设置图像的列
             captureRgb.set(CAP_PROP_FRAME_HEIGHT, ROWSIMAGE); // 设置图像的行
-            captureRgb.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M','J','P','G'));  
+            captureRgb.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));
         }
     }
 
@@ -376,9 +375,9 @@ public:
         result.y = 0;
         for (int i = 0; i < results.size(); i++)
         {
-            if (results[i].score >= result.score)//选择分数最优的目标物
-            //int row = results[i].y + results[i].height / 2;
-            //if (row > (result.y + result.height / 2) && row > ROWSIMAGE / 2) // 选择图像最底端的目标物
+            if (results[i].score >= result.score) // 选择分数最优的目标物
+                // int row = results[i].y + results[i].height / 2;
+                // if (row > (result.y + result.height / 2) && row > ROWSIMAGE / 2) // 选择图像最底端的目标物
                 result = results[i];
         }
 
@@ -416,24 +415,24 @@ public:
      * @param part 零件AI标签
      * @return Center 返回控制中心：center
      */
-    Center searchPartRgb(string part) 
+    Center searchPartRgb(string part)
     {
         Center center;
-        center.x = 0; center.y = 0; // 初始化
+        center.x = 0;
+        center.y = 0; // 初始化
         Mat img;
-        
-        if (!captureRgb.read(img)) 
+
+        if (!captureRgb.read(img))
         {
             setCamera(false); // 调用你现有的切换/初始化函数
             return center;
         }
-            
 
         // --- ArUco 检测配置 ---
         vector<int> ids;
         vector<vector<Point2f>> corners;
         Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
-        
+
         // 执行检测
         aruco::detectMarkers(img, dictionary, corners, ids);
 
@@ -441,11 +440,14 @@ public:
         float minDistanceToCenter = 1e10;
 
         // --- 筛选 ID 为 1 且离图像中心最近的标签 ---
-        for (int i = 0; i < ids.size(); i++) {
-            if (ids[i] == 1) {
+        for (int i = 0; i < ids.size(); i++)
+        {
+            if (ids[i] == 1)
+            {
                 // 计算当前 ArUco 的几何中心
                 Point2f markerCenter(0, 0);
-                for (auto& corner : corners[i]) {
+                for (auto &corner : corners[i])
+                {
                     markerCenter += corner;
                 }
                 markerCenter.x /= 4.0;
@@ -456,7 +458,8 @@ public:
                 float dy = markerCenter.y - ROWSIMAGE / 2.0;
                 float dist = sqrt(dx * dx + dy * dy);
 
-                if (dist < minDistanceToCenter) {
+                if (dist < minDistanceToCenter)
+                {
                     minDistanceToCenter = dist;
                     targetIdx = i;
                 }
@@ -464,10 +467,12 @@ public:
         }
 
         // --- 计算并赋值 Center ---
-        if (targetIdx != -1) {
+        if (targetIdx != -1)
+        {
             // 计算目标 ArUco 的中心点
             Point2f finalMarkerCenter(0, 0);
-            for (auto& corner : corners[targetIdx]) {
+            for (auto &corner : corners[targetIdx])
+            {
                 finalMarkerCenter += corner;
             }
             finalMarkerCenter.x /= 4.0;
@@ -476,9 +481,9 @@ public:
             // 保持原有的校正逻辑
             center.x = (int)finalMarkerCenter.x - COLSIMAGE / 2;
             // 模仿原代码对机械爪的微调：Y轴加上一个偏移量 (ArUco 中心点近似于原 result.y + height*0.5)
-            center.y = (int)finalMarkerCenter.y - ROWSIMAGE / 2; 
+            center.y = (int)finalMarkerCenter.y - ROWSIMAGE / 2;
         }
-        else    //未找到 ArUco，搜索蓝色方块
+        else // 未找到 ArUco，搜索蓝色方块
         {
             Mat hsv, mask;
             cvtColor(img, hsv, COLOR_BGR2HSV);
@@ -499,17 +504,17 @@ public:
             int bestContourIdx = -1;
             float minBlueDist = 1e10;
 
-            for (int i = 0; i < contours.size(); i++) 
+            for (int i = 0; i < contours.size(); i++)
             {
                 double area = contourArea(contours[i]);
-                if (area > 500) 
-                {   
+                if (area > 500)
+                {
                     // 过滤掉太小的干扰点.
                     Rect r = boundingRect(contours[i]);
                     float bX = r.x + r.width / 2.0;
                     float bY = r.y + r.height / 2.0;
-                    float d = sqrt(pow(bX - COLSIMAGE/2.0, 2) + pow(bY - ROWSIMAGE/2.0, 2));
-                    
+                    float d = sqrt(pow(bX - COLSIMAGE / 2.0, 2) + pow(bY - ROWSIMAGE / 2.0, 2));
+
                     if (d < minBlueDist)
                     {
                         minBlueDist = d;
@@ -518,12 +523,13 @@ public:
                 }
             }
 
-            if (bestContourIdx != -1) {
+            if (bestContourIdx != -1)
+            {
                 Rect finalRect = boundingRect(contours[bestContourIdx]);
                 center.x = (finalRect.x + finalRect.width / 2) - COLSIMAGE / 2;
                 center.y = (finalRect.y + finalRect.height / 2) - ROWSIMAGE / 2;
-                
-                if (debug) 
+
+                if (debug)
                 {
                     rectangle(img, finalRect, Scalar(0, 0, 255), 2); // 蓝色框标识
                 }
@@ -531,19 +537,20 @@ public:
         }
 
         // --- 调试模式 (保持原样) ---
-        if (debug) {
-            if (targetIdx != -1) {
+        if (debug)
+        {
+            if (targetIdx != -1)
+            {
                 // 绘制 ArUco 边框和 ID
                 aruco::drawDetectedMarkers(img, corners, ids);
-                cv::line(img, Point(COLSIMAGE/2, 0), Point(COLSIMAGE/2, ROWSIMAGE), Scalar(255,0,0), 1);
-                cv::line(img, Point(0, ROWSIMAGE/2), Point(COLSIMAGE, ROWSIMAGE/2), Scalar(255,0,0), 1);
+                cv::line(img, Point(COLSIMAGE / 2, 0), Point(COLSIMAGE / 2, ROWSIMAGE), Scalar(255, 0, 0), 1);
+                cv::line(img, Point(0, ROWSIMAGE / 2), Point(COLSIMAGE, ROWSIMAGE / 2), Scalar(255, 0, 0), 1);
             }
             imshow("img", img);
             waitKey(1);
         }
         return center;
     }
-
 
     /**
      * @brief 智能取件(零件抓取场景)
@@ -607,15 +614,15 @@ public:
                     robotCtrl(0, 0, 0);
                     talon.setActions(talon.ACTION_EXT);             // 机械臂动作：伸展
                     usleep(30 * 1000);                              // 等待：us
-                    talon.setJointPosition(talon.ARM_JOINT_6, 9.0); // 机械爪张开：9cm
+                    talon.setJointPosition(talon.ARM_JOINT_6, 7.0); // 机械爪张开：9cm
                 }
                 if (abs(pidLocal.feedBack - pidLocal.ref) <= pidLocal.deadline && findPart) // 面对目标零件姿态已校正Ok
                 {
                     Mat img;
                     counter = getSystTime(); // 更新计时器
                     // 机器人运动控制
-                    setCamera(false);                               // 切换RGB相机
-                    while ((getSystTime() - counter) < 3000)    // 确保相机切换成功
+                    setCamera(false);                        // 切换RGB相机
+                    while ((getSystTime() - counter) < 3000) // 确保相机切换成功
                     {
                         if (captureRgb.read(img))
                             break;
@@ -623,7 +630,7 @@ public:
                             setCamera(false); // 调用你现有的切换/初始化函数
                         ROS_ERROR_STREAM("相机打开失败，正在重新尝试...");
                     }
-                    orienOffset = 0;      // 姿态校正误差=0
+                    orienOffset = 0;                                                                 // 姿态校正误差=0
                     while (!talon.actionOver[talon.ACTION_EXT] && (getSystTime() - counter) < 12000) // 等待机械臂伸展完成
                     {
                         // sleep(1);
@@ -637,7 +644,7 @@ public:
                     pidLocal.enable = false;                // 位置PID控制
                     count = 0;
                     pidDis.ref = disSearch;
-                    //pidDis.ref = disPick; // 机械臂抓取零件距离：m
+                    // pidDis.ref = disPick; // 机械臂抓取零件距离：m
                     ROS_ERROR_STREAM("----------- STEP: " + to_string(pickStep) + " -----------");
                     robotCtrl(0, 0, 0);      // 机器人运动控制
                     counter = getSystTime(); // 更新计时器
@@ -676,14 +683,14 @@ public:
             else if (!findPart && (getSystTime() - counter) > 3000) // 如果AI未检测到零件
             {
                 pidLocal.enable = true;
-                pidPose.enable = true;  //同时保证机器人身体不歪
-                if (searchLeft) // 向右转1s
+                pidPose.enable = true; // 同时保证机器人身体不歪
+                if (searchLeft)        // 向右转1s
                 {
                     if (countLeft < 3500)
                     {
                         countLeft += getSystTime() - thisTime;
                         pidPose.enable = true;
-                        pidLocal.feedBack = COLSIMAGE / 2;  //诱骗向左移动
+                        pidLocal.feedBack = COLSIMAGE / 2; // 诱骗向左移动
                         // orienOffset = -0.1; // 机器人向右转
                     }
                     else
@@ -692,7 +699,7 @@ public:
                 else if (countRight < 7000) // 向左转3s
                 {
                     countRight += getSystTime() - thisTime;
-                    pidLocal.feedBack = -COLSIMAGE / 2;     //诱骗向右移动
+                    pidLocal.feedBack = -COLSIMAGE / 2; // 诱骗向右移动
                     // orienOffset = 0.1; // 机器人向左转
                 }
                 else // 未检测到目标零件
@@ -720,14 +727,14 @@ public:
             }
             else // 已检测到目标零件
             {
-                orienOffset = 0;                                                                               // 姿态校正误差=0
+                orienOffset = 0;                                                                                // 姿态校正误差=0
                 if (abs(pidLocal.feedBack - pidLocal.ref) <= pidLocal.deadline && abs(pidPose.feedBack) < 0.05) // 角度+位置调整完成
                 {
                     Mat img;
-                    counter = getSystTime(); // 更新计时器
-                    robotCtrl(0, 0, 0);      // 机器人运动控制
-                    setCamera(false);        // 切换RGB相机
-                    while ((getSystTime() - counter) < 3000)    // 确保相机切换成功
+                    counter = getSystTime();                 // 更新计时器
+                    robotCtrl(0, 0, 0);                      // 机器人运动控制
+                    setCamera(false);                        // 切换RGB相机
+                    while ((getSystTime() - counter) < 3000) // 确保相机切换成功
                     {
                         if (captureRgb.read(img))
                             break;
@@ -749,7 +756,7 @@ public:
                     pidLocal.enable = false;                // 位置PID控制
                     count = 0;
                     // pidDis.ref = disPick;                   // 机械臂抓取零件距离：m
-                    counter = getSystTime();                // 更新计时器
+                    counter = getSystTime(); // 更新计时器
                     ROS_ERROR_STREAM("----------- STEP: " + to_string(pickStep) + " -----------");
                 }
             }
@@ -829,15 +836,15 @@ public:
             //[01] 机械爪瞄准零件控制
             clawfindParts(part); // 机械爪跟随零件控制
 
-            poseControl();                                                                    // 机器人姿态控制（距离+方向）
+            poseControl();                                                                     // 机器人姿态控制（距离+方向）
             if (abs(pidDis.feedBack - pidDis.ref) < 0.05 || (getSystTime() - counter) > 10000) // 姿态调制至误差范围or超时
             {
                 for (int i = 0; i < 5; i++) // 机器人停止运动
                 {
                     robotCtrl(0, 0, 0);
-                    usleep(30 * 1000);                                                // 等待：us
+                    usleep(30 * 1000); // 等待：us
                 }
-                
+
                 talon.setJointPosition(talon.ARM_JOINT_6, getClawPosition(part)); // 机械爪夹取
 
                 sleep(13 - getClawPosition(part)); // 等待机械爪夹取结束
@@ -860,8 +867,8 @@ public:
         case PickStep::PICK_STEP_LOCAL: // 机器人重定位
         {
             talon.setClawMotion(-pidClawX.out, 0.15); // 机械爪运动控制: 往上抬0.3rad
-            pidDis.ref = disSearch;                  // 机器人后退，导航适合距离
-            poseControl();                           // 机器人姿态控制（距离+方向）
+            pidDis.ref = disSearch;                   // 机器人后退，导航适合距离
+            poseControl();                            // 机器人姿态控制（距离+方向）
 
             if (abs(pidDis.feedBack - pidDis.ref) < 0.05 || (getSystTime() - counter) > 5000) // 姿态调制至误差范围or超时
             {
@@ -933,12 +940,12 @@ public:
         case PickStep::PICK_STEP_GRAB: // 零件放置
         {
             pidDis.ref = disClaw + 0.2; // 机械臂放置零件距离：m
-            poseControl();        // 机器人姿态控制（距离+方向+位置）
+            poseControl();              // 机器人姿态控制（距离+方向+位置）
 
-            float offsetX = 0;  // 机械爪末端横向偏移
-            float offsetY = -0.20;  // 机械爪末端纵向偏移
+            float offsetX = 0;     // 机械爪末端横向偏移
+            float offsetY = -0.20; // 机械爪末端纵向偏移
             if (placePart == 2)
-                offsetX = -0.3;// 机械爪运动控制: 左侧放置零件
+                offsetX = -0.3; // 机械爪运动控制: 左侧放置零件
             else if (placePart == 3)
                 offsetX = 0.3; // 机械爪运动控制: 右侧放置零件
             else
@@ -951,7 +958,7 @@ public:
                  abs(pidPose.feedBack) < 0.1) ||
                 (getSystTime() - counter) > 3000) // 姿态调制至误差范围or超时
             {
-                
+
                 pickStep = PickStep::PICK_STEP_LOCAL; // 切换智能取件任务流程
                 for (int i = 0; i < 5; i++)
                 {
@@ -960,11 +967,11 @@ public:
                 }
                 talon.setClawMotion(offsetX, offsetY); // 机械爪运动控制
                 sleep(2);
-                talon.setJointPosition(talon.ARM_JOINT_6, 9); // 机械爪放置零件
-                sleep(6);                   // 等待零件放置完成
+                talon.setJointPosition(talon.ARM_JOINT_6, 7.0); // 机械爪放置零件
+                sleep(6);                                       // 等待零件放置完成
                 // if (part != LABEL_AI_SCREW)
                 talon.setClawMotion(offsetX, 0.2); // 机械爪运动控制
-                pidDis.ref = disPick + 0.5; // 机器人后退，导航适合距离+机械臂收回
+                pidDis.ref = disPick + 0.5;        // 机器人后退，导航适合距离+机械臂收回
                 counter = getSystTime();
             }
             break;
